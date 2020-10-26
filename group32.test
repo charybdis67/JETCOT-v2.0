@@ -1,0 +1,44 @@
+$functions$
+begin
+int readIncline[]:
+    int incline = x
+    this incline
+float readAltitude[]:
+    this altitude
+int readTemperature[]:
+    this temperature
+int readAcceleration[]:
+    this acceleration
+nada turnOnCamera[boolean cam]:
+    cam = true
+nada turnOffCamera[boolean cam]:
+    cam = false
+nada takePicture[boolean cam]:
+    if cam == true:
+       capture[]
+    else:
+       print("camera is off")
+Drone capture[]:
+    this picture
+nada connect[string password, boolean connection]:
+    if wifiPassword == password:
+       connection = true
+    else:
+       connection = false
+float readTime[Timer thisTimer]:
+    float currentTime = thisTimer.getTimer[]
+    this currentTime
+float getTimer[]:
+    this timestamp
+nada main[]:
+    Drone drone1
+    string passwordEnter = "jetcot123"
+    boolean connected = false
+    connect[passwordEnter,connected]
+    print("drone is connected to wifi")
+    int count = 5
+    while count < 10:
+	count = count + 1
+	readAcceleration[]
+	readIncline[]
+end
