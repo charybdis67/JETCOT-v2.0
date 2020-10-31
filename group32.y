@@ -1,11 +1,11 @@
-%token IF ELSE DRONE PROGRAM_BEGIN PROGRAM_END TYPE_STRING TYPE_FLOAT TYPE_INT TYPE_BOOL RETURN TRUE FALSE WHILE_LOOP OR AND NOT PRINT_STATEMENT VOID FUNC WİFİ_IDENTIFIER INCLINE_FUNC ALTITUDE_FUNC ACCEL_FUNC TEMPR_FUNC ON_FUNC OFF_FUNC PICTURE_FUNC CAPTURE_FUNC CONNECT_FUNC MAIN_FUNC TIME_FUNC TIMER_FUNC VARIABLE INTEGER COMMA BELONGS SMALLER_THAN BIGGER_THAN ADD SUBTRACT DIVIDE MULTIPLY LP RP LC RC LSQ  END_STATEMENT RSQ SEMI_COL ASGN_OP COMMENT QUOTE
+%token IF ELSE DRONE PROGRAM_BEGIN PROGRAM_END TIMER TYPE_STRING TYPE_FLOAT TYPE_INT TYPE_BOOL CONST RETURN TRUE FALSE WHILE_LOOP OR AND NOT PRINT_STATEMENT VOID_FUNC WIFI_IDENTIFIER INCLINE_FUNC ALTITUDE_FUNC ACCEL_FUNC TEMPR_FUNC ON_FUNC OFF_FUNC PICTURE_FUNC CAPTURE_FUNC CONNECT_FUNC MAIN_FUNC TIME_FUNC TIMER_FUNC FOR_LOOP VARIABLE INTEGER COMMA BELONGS SMALLER_THAN BIGGER_THAN ADD SUBTRACT DIVIDE MULTIPLY LP RP LC RC LSQ  END_STATEMENT RSQ SEMI_COL ASGN_OP COMMENT QUOTE 
 %%
 program:		PROGRAM_BEGIN functions PROGRAM_END 
 			|
 
 functions:		functions function | function 
 
-function:		ident_type function_name LSQ parameter list RSQ END_STATEMENT				body
+function:		ident_type function_name LSQ parameter_list RSQ END_STATEMENT				body
 
 func_start:		function_name LSQ parameter_list RSQ
 
@@ -17,7 +17,7 @@ parameter_list:		ident_type parameter COMMA SMALLER_THAN parameter_list			 		BIG
 
 parameter:		variable
 
-variable:		VARIABLE | CONST?
+variable:		VARIABLE | CONST
 
 body:			stmts RETURN variable
 
@@ -28,14 +28,14 @@ stmts:			stmt
 
 stmt:			matched | unmatched
 
-matched:		IF logic_expr END_STATEMENT matched ELSE END_STATEMENT				matched
+matched:		IF log_stmts END_STATEMENT matched ELSE END_STATEMENT				matched
 
-                     		| non-if_stmts
+                     		| variable
 
-unmatched:		IF logic_expr END_STATEMENT stmt
-			| IF logic_expr END_STATEMENT matched ELSE END_STATEMENT				unmatched
+unmatched:		IF log_stmts END_STATEMENT stmt
+			| IF log_stmts END_STATEMENT matched ELSE END_STATEMENT				unmatched
 
-non-if_stmts:		assignment
+non_if_stmts:		assignment
 | primitive_func
 | WHILE_LOOP
 | FOR_LOOP
@@ -45,13 +45,13 @@ primitive_func:	inclination
                                	| altitude
                                	| temperature 
                                	| acceleration 
-                               	| camera-on        
-                               	| camera-off
+                               	| camera_on        
+                               	| camera_off
                                	| picture
                                	| capture
                                	| connect
                                	| time
-                               	| get-timer
+                               	| get_timer
 
 inclination:		INCLINE_FUNC LSQ RSQ
 
@@ -61,9 +61,9 @@ temperature:		TEMPR_FUNC LSQ RSQ END_STATEMENT
 
 acceleration:		ACCEL_FUNC LSQ RSQ END_STATEMENT
 
-camera-on:		ON_FUNC LSQ variable RSQ END_STATEMENT
+camera_on:		ON_FUNC LSQ variable RSQ END_STATEMENT
 
-camera-off:		OFF_FUNC LSQ variable RSQ END_STATEMENT
+camera_off:		OFF_FUNC LSQ variable RSQ END_STATEMENT
 
 picture:		ident_type PICTURE_FUNC LSQ variable RSQ END_STATEMENT
 
@@ -73,7 +73,7 @@ connect:		ident_type CONNECT_FUNC LSQ variable COMMA variable RSQ			 	END_STATEM
 
 time:			ident_type TIME_FUNC LSQ variable RSQ END_STATEMENT
 
-get-timer:		ident_type TIMER_FUNC LSQ variable RSQ END_STATEMENT
+get_timer:		ident_type TIMER_FUNC LSQ variable RSQ END_STATEMENT
 
 log_stmts:		log_stmts OR and_cond
                            	| and_cond
@@ -87,16 +87,16 @@ not_cond:		NOT log_stmts
 assignment:		ident_type var ASGN_OP log_stmts
                         	| ident_type var ASGN_OP math_expr
                         | ident_type var ASGN_OP var BELONGS func_start
-                        | ident_type var ASGN_OP dronic>
+                        | ident_type var ASGN_OP dronic
 			| var ASGN_OP var
 | var  ASGN_OP log_stmts
 | var ASGN_OP math_expr		
 		| var ASGN_OP VARIABLE BELONGS func_start
 
-var → 			VARIABLE
+var:			VARIABLE
 
-math_expr:		math_expr + term
-			| math_expr - term
+math_expr:		math_expr ADD term
+			| math_expr SUBTRACT term
 			| term
 
 term:			term MULTIPLY factor
@@ -119,4 +119,4 @@ dronic:			TYPE_STRING
                     		| TYPE_INT
                     		| TYPE_BOOL
 
-ident_type:		TYPE_INT | TYPE_BOOL | TYPE_FLOAT | TYPE_STRING | VOID_FUNC | DRONE | Timer |
+ident_type:		TYPE_INT | TYPE_BOOL | TYPE_FLOAT | TYPE_STRING | VOID_FUNC | DRONE | TIMER |
