@@ -1,0 +1,2569 @@
+   0  $accept : start $end
+
+   1  start : program
+
+   2  program : PROGRAM_BEGIN functions PROGRAM_END
+   3          |
+
+   4  functions : functions function
+   5            | function
+
+   6  function : ident_type function_name LSQ parameter_list RSQ END_STATEMENT body
+
+   7  func_start : function_name LSQ parameter_list RSQ
+
+   8  function_name : VARIABLE
+
+   9  parameter_list : ident_type parameter COMMA SMALLER_THAN parameter_list BIGGER_THAN
+  10                 | ident_type parameter
+  11                 |
+
+  12  parameter : variable
+
+  13  variable : VARIABLE
+  14           | CONST
+
+  15  body : stmts RETURN variable
+
+  16  stmts : stmt
+  17        | stmt stmts
+  18        | COMMENT stmts
+  19        | stmts COMMENT
+
+  20  stmt : matched
+  21       | unmatched
+
+  22  matched : IF log_stmts END_STATEMENT matched ELSE END_STATEMENT matched
+  23          | non_if_stmts
+
+  24  unmatched : IF log_stmts END_STATEMENT stmt
+  25            | IF log_stmts END_STATEMENT matched ELSE END_STATEMENT unmatched
+
+  26  non_if_stmts : assignment
+  27               | primitive_func
+  28               | WHILE_LOOP
+  29               | FOR_LOOP
+  30               | PRINT_STATEMENT
+
+  31  primitive_func : inclination
+  32                 | altitude
+  33                 | temperature
+  34                 | acceleration
+  35                 | camera_on
+  36                 | camera_off
+  37                 | picture
+  38                 | capture
+  39                 | connect
+  40                 | time
+  41                 | get_timer
+
+  42  while_loop : WHILE log_stmts END_STATEMENT stmts
+  43             | WHILE comparison END_STATEMENT stmts
+
+  44  for : FOR_LOOP ident_type var COMMA comparison COMMA assignment END_STATEMENT stmts
+
+  45  inclination : INCLINE_FUNC LSQ RSQ
+
+  46  altitude : ALTITUDE_FUNC LSQ RSQ END_STATEMENT
+
+  47  temperature : TEMPR_FUNC LSQ RSQ END_STATEMENT
+
+  48  acceleration : ACCEL_FUNC LSQ RSQ END_STATEMENT
+
+  49  camera_on : ON_FUNC LSQ variable RSQ END_STATEMENT
+
+  50  camera_off : OFF_FUNC LSQ variable RSQ END_STATEMENT
+
+  51  picture : ident_type PICTURE_FUNC LSQ variable RSQ END_STATEMENT
+
+  52  capture : ident_type CAPTURE_FUNC LSQ RSQ END_STATEMENT
+
+  53  connect : ident_type CONNECT_FUNC LSQ variable COMMA variable RSQ END_STATEMENT
+
+  54  time : ident_type TIME_FUNC LSQ variable RSQ END_STATEMENT
+
+  55  get_timer : ident_type TIMER_FUNC LSQ variable RSQ END_STATEMENT
+
+  56  log_stmts : log_stmts OR and_cond
+  57            | and_cond
+
+  58  and_cond : and_cond AND not_cond
+  59           | not_cond
+
+  60  not_cond : NOT log_stmts
+  61           | log_stmts
+
+  62  assignment : ident_type var ASGN_OP log_stmts
+  63             | ident_type var ASGN_OP math_expr
+  64             | ident_type var ASGN_OP var BELONGS func_start
+  65             | ident_type var ASGN_OP dronic
+  66             | var ASGN_OP var
+  67             | var ASGN_OP log_stmts
+  68             | var ASGN_OP math_expr
+  69             | var ASGN_OP VARIABLE BELONGS func_start
+
+  70  comparison : var BIGGER_THAN var
+  71             | dronic BIGGER_THAN dronic
+  72             | var LESS_THAN var
+  73             | dronic LESS_THAN dronic
+  74             | var BIGGER_EQUAL var
+  75             | dronic BIGGER_EQUAL dronic
+  76             | var LESS_EQUAL var
+  77             | dronic LESS_EQUAL dronic
+  78             | var EQUAL var
+  79             | dronic EQUAL dronic
+  80             | var NOT_EQUAL var
+  81             | dronic NOT_EQUAL dronic
+
+  82  var : VARIABLE
+
+  83  math_expr : math_expr ADD term
+  84            | math_expr SUBTRACT term
+  85            | term
+
+  86  term : term MULTIPLY factor
+  87       | term
+  88       | factor
+  89       | factor
+
+  90  factor :
+  91         | ADD factor
+  92         | SUBTRACT factor
+
+  93  print : print LSQ dronic RSQ
+  94        | print LSQ log_stmts RSQ
+  95        | print LSQ primitive_func RSQ
+  96        | print LSQ variable RSQ
+
+  97  input :
+
+  98  dronic : TYPE_STRING
+  99         | TYPE_FLOAT
+ 100         | TYPE_INT
+ 101         | TYPE_BOOL
+
+ 102  ident_type : TYPE_INT
+ 103             | TYPE_BOOL
+ 104             | TYPE_FLOAT
+ 105             | TYPE_STRING
+ 106             | VOID_FUNC
+ 107             | DRONE
+ 108             | TIMER
+ 109             |
+
+state 0
+	$accept : . start $end  (0)
+	program : .  (3)
+
+	PROGRAM_BEGIN  shift 1
+	$end  reduce 3
+
+	start  goto 2
+	program  goto 3
+
+
+state 1
+	program : PROGRAM_BEGIN . functions PROGRAM_END  (2)
+	ident_type : .  (109)
+
+	DRONE  shift 4
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	VOID_FUNC  shift 10
+	VARIABLE  reduce 109
+
+	functions  goto 11
+	function  goto 12
+	ident_type  goto 13
+
+
+state 2
+	$accept : start . $end  (0)
+
+	$end  accept
+
+
+state 3
+	start : program .  (1)
+
+	.  reduce 1
+
+
+state 4
+	ident_type : DRONE .  (107)
+
+	.  reduce 107
+
+
+state 5
+	ident_type : TIMER .  (108)
+
+	.  reduce 108
+
+
+state 6
+	ident_type : TYPE_STRING .  (105)
+
+	.  reduce 105
+
+
+state 7
+	ident_type : TYPE_FLOAT .  (104)
+
+	.  reduce 104
+
+
+state 8
+	ident_type : TYPE_INT .  (102)
+
+	.  reduce 102
+
+
+state 9
+	ident_type : TYPE_BOOL .  (103)
+
+	.  reduce 103
+
+
+state 10
+	ident_type : VOID_FUNC .  (106)
+
+	.  reduce 106
+
+
+state 11
+	program : PROGRAM_BEGIN functions . PROGRAM_END  (2)
+	functions : functions . function  (4)
+	ident_type : .  (109)
+
+	DRONE  shift 4
+	PROGRAM_END  shift 14
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	VOID_FUNC  shift 10
+	VARIABLE  reduce 109
+
+	function  goto 15
+	ident_type  goto 13
+
+
+state 12
+	functions : function .  (5)
+
+	.  reduce 5
+
+
+state 13
+	function : ident_type . function_name LSQ parameter_list RSQ END_STATEMENT body  (6)
+
+	VARIABLE  shift 16
+	.  error
+
+	function_name  goto 17
+
+
+state 14
+	program : PROGRAM_BEGIN functions PROGRAM_END .  (2)
+
+	.  reduce 2
+
+
+state 15
+	functions : functions function .  (4)
+
+	.  reduce 4
+
+
+state 16
+	function_name : VARIABLE .  (8)
+
+	.  reduce 8
+
+
+state 17
+	function : ident_type function_name . LSQ parameter_list RSQ END_STATEMENT body  (6)
+
+	LSQ  shift 18
+	.  error
+
+
+state 18
+	function : ident_type function_name LSQ . parameter_list RSQ END_STATEMENT body  (6)
+	parameter_list : .  (11)
+	ident_type : .  (109)
+
+	DRONE  shift 4
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	VOID_FUNC  shift 10
+	CONST  reduce 109
+	VARIABLE  reduce 109
+	RSQ  reduce 11
+
+	ident_type  goto 19
+	parameter_list  goto 20
+
+
+state 19
+	parameter_list : ident_type . parameter COMMA SMALLER_THAN parameter_list BIGGER_THAN  (9)
+	parameter_list : ident_type . parameter  (10)
+
+	CONST  shift 21
+	VARIABLE  shift 22
+	.  error
+
+	parameter  goto 23
+	variable  goto 24
+
+
+state 20
+	function : ident_type function_name LSQ parameter_list . RSQ END_STATEMENT body  (6)
+
+	RSQ  shift 25
+	.  error
+
+
+state 21
+	variable : CONST .  (14)
+
+	.  reduce 14
+
+
+state 22
+	variable : VARIABLE .  (13)
+
+	.  reduce 13
+
+
+state 23
+	parameter_list : ident_type parameter . COMMA SMALLER_THAN parameter_list BIGGER_THAN  (9)
+	parameter_list : ident_type parameter .  (10)
+
+	COMMA  shift 26
+	BIGGER_THAN  reduce 10
+	RSQ  reduce 10
+
+
+state 24
+	parameter : variable .  (12)
+
+	.  reduce 12
+
+
+state 25
+	function : ident_type function_name LSQ parameter_list RSQ . END_STATEMENT body  (6)
+
+	END_STATEMENT  shift 27
+	.  error
+
+
+state 26
+	parameter_list : ident_type parameter COMMA . SMALLER_THAN parameter_list BIGGER_THAN  (9)
+
+	SMALLER_THAN  shift 28
+	.  error
+
+
+27: shift/reduce conflict (shift 39, reduce 109) on VARIABLE
+state 27
+	function : ident_type function_name LSQ parameter_list RSQ END_STATEMENT . body  (6)
+	ident_type : .  (109)
+
+	IF  shift 29
+	DRONE  shift 4
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	WHILE_LOOP  shift 30
+	FOR_LOOP  shift 31
+	PRINT_STATEMENT  shift 32
+	VOID_FUNC  shift 10
+	INCLINE_FUNC  shift 33
+	ALTITUDE_FUNC  shift 34
+	ACCEL_FUNC  shift 35
+	TEMPR_FUNC  shift 36
+	ON_FUNC  shift 37
+	OFF_FUNC  shift 38
+	VARIABLE  shift 39
+	COMMENT  shift 40
+	PICTURE_FUNC  reduce 109
+	CAPTURE_FUNC  reduce 109
+	CONNECT_FUNC  reduce 109
+	TIME_FUNC  reduce 109
+	TIMER_FUNC  reduce 109
+
+	ident_type  goto 41
+	body  goto 42
+	stmts  goto 43
+	stmt  goto 44
+	matched  goto 45
+	unmatched  goto 46
+	non_if_stmts  goto 47
+	assignment  goto 48
+	primitive_func  goto 49
+	inclination  goto 50
+	altitude  goto 51
+	temperature  goto 52
+	acceleration  goto 53
+	camera_on  goto 54
+	camera_off  goto 55
+	picture  goto 56
+	capture  goto 57
+	connect  goto 58
+	time  goto 59
+	get_timer  goto 60
+	var  goto 61
+
+
+state 28
+	parameter_list : ident_type parameter COMMA SMALLER_THAN . parameter_list BIGGER_THAN  (9)
+	parameter_list : .  (11)
+	ident_type : .  (109)
+
+	DRONE  shift 4
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	VOID_FUNC  shift 10
+	CONST  reduce 109
+	VARIABLE  reduce 109
+	BIGGER_THAN  reduce 11
+
+	ident_type  goto 19
+	parameter_list  goto 62
+
+
+state 29
+	matched : IF . log_stmts END_STATEMENT matched ELSE END_STATEMENT matched  (22)
+	unmatched : IF . log_stmts END_STATEMENT stmt  (24)
+	unmatched : IF . log_stmts END_STATEMENT matched ELSE END_STATEMENT unmatched  (25)
+
+	NOT  shift 63
+	.  error
+
+	log_stmts  goto 64
+	and_cond  goto 65
+	not_cond  goto 66
+
+
+state 30
+	non_if_stmts : WHILE_LOOP .  (28)
+
+	.  reduce 28
+
+
+state 31
+	non_if_stmts : FOR_LOOP .  (29)
+
+	.  reduce 29
+
+
+state 32
+	non_if_stmts : PRINT_STATEMENT .  (30)
+
+	.  reduce 30
+
+
+state 33
+	inclination : INCLINE_FUNC . LSQ RSQ  (45)
+
+	LSQ  shift 67
+	.  error
+
+
+state 34
+	altitude : ALTITUDE_FUNC . LSQ RSQ END_STATEMENT  (46)
+
+	LSQ  shift 68
+	.  error
+
+
+state 35
+	acceleration : ACCEL_FUNC . LSQ RSQ END_STATEMENT  (48)
+
+	LSQ  shift 69
+	.  error
+
+
+state 36
+	temperature : TEMPR_FUNC . LSQ RSQ END_STATEMENT  (47)
+
+	LSQ  shift 70
+	.  error
+
+
+state 37
+	camera_on : ON_FUNC . LSQ variable RSQ END_STATEMENT  (49)
+
+	LSQ  shift 71
+	.  error
+
+
+state 38
+	camera_off : OFF_FUNC . LSQ variable RSQ END_STATEMENT  (50)
+
+	LSQ  shift 72
+	.  error
+
+
+state 39
+	var : VARIABLE .  (82)
+
+	.  reduce 82
+
+
+40: shift/reduce conflict (shift 39, reduce 109) on VARIABLE
+state 40
+	stmts : COMMENT . stmts  (18)
+	ident_type : .  (109)
+
+	IF  shift 29
+	DRONE  shift 4
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	WHILE_LOOP  shift 30
+	FOR_LOOP  shift 31
+	PRINT_STATEMENT  shift 32
+	VOID_FUNC  shift 10
+	INCLINE_FUNC  shift 33
+	ALTITUDE_FUNC  shift 34
+	ACCEL_FUNC  shift 35
+	TEMPR_FUNC  shift 36
+	ON_FUNC  shift 37
+	OFF_FUNC  shift 38
+	VARIABLE  shift 39
+	COMMENT  shift 40
+	PICTURE_FUNC  reduce 109
+	CAPTURE_FUNC  reduce 109
+	CONNECT_FUNC  reduce 109
+	TIME_FUNC  reduce 109
+	TIMER_FUNC  reduce 109
+
+	ident_type  goto 41
+	stmts  goto 73
+	stmt  goto 44
+	matched  goto 45
+	unmatched  goto 46
+	non_if_stmts  goto 47
+	assignment  goto 48
+	primitive_func  goto 49
+	inclination  goto 50
+	altitude  goto 51
+	temperature  goto 52
+	acceleration  goto 53
+	camera_on  goto 54
+	camera_off  goto 55
+	picture  goto 56
+	capture  goto 57
+	connect  goto 58
+	time  goto 59
+	get_timer  goto 60
+	var  goto 61
+
+
+state 41
+	picture : ident_type . PICTURE_FUNC LSQ variable RSQ END_STATEMENT  (51)
+	capture : ident_type . CAPTURE_FUNC LSQ RSQ END_STATEMENT  (52)
+	connect : ident_type . CONNECT_FUNC LSQ variable COMMA variable RSQ END_STATEMENT  (53)
+	time : ident_type . TIME_FUNC LSQ variable RSQ END_STATEMENT  (54)
+	get_timer : ident_type . TIMER_FUNC LSQ variable RSQ END_STATEMENT  (55)
+	assignment : ident_type . var ASGN_OP log_stmts  (62)
+	assignment : ident_type . var ASGN_OP math_expr  (63)
+	assignment : ident_type . var ASGN_OP var BELONGS func_start  (64)
+	assignment : ident_type . var ASGN_OP dronic  (65)
+
+	PICTURE_FUNC  shift 74
+	CAPTURE_FUNC  shift 75
+	CONNECT_FUNC  shift 76
+	TIME_FUNC  shift 77
+	TIMER_FUNC  shift 78
+	VARIABLE  shift 39
+	.  error
+
+	var  goto 79
+
+
+state 42
+	function : ident_type function_name LSQ parameter_list RSQ END_STATEMENT body .  (6)
+
+	.  reduce 6
+
+
+state 43
+	body : stmts . RETURN variable  (15)
+	stmts : stmts . COMMENT  (19)
+
+	RETURN  shift 80
+	COMMENT  shift 81
+	.  error
+
+
+44: shift/reduce conflict (shift 39, reduce 109) on VARIABLE
+44: shift/reduce conflict (shift 40, reduce 16) on COMMENT
+state 44
+	stmts : stmt .  (16)
+	stmts : stmt . stmts  (17)
+	ident_type : .  (109)
+
+	IF  shift 29
+	DRONE  shift 4
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	WHILE_LOOP  shift 30
+	FOR_LOOP  shift 31
+	PRINT_STATEMENT  shift 32
+	VOID_FUNC  shift 10
+	INCLINE_FUNC  shift 33
+	ALTITUDE_FUNC  shift 34
+	ACCEL_FUNC  shift 35
+	TEMPR_FUNC  shift 36
+	ON_FUNC  shift 37
+	OFF_FUNC  shift 38
+	VARIABLE  shift 39
+	COMMENT  shift 40
+	RETURN  reduce 16
+	PICTURE_FUNC  reduce 109
+	CAPTURE_FUNC  reduce 109
+	CONNECT_FUNC  reduce 109
+	TIME_FUNC  reduce 109
+	TIMER_FUNC  reduce 109
+
+	ident_type  goto 41
+	stmts  goto 82
+	stmt  goto 44
+	matched  goto 45
+	unmatched  goto 46
+	non_if_stmts  goto 47
+	assignment  goto 48
+	primitive_func  goto 49
+	inclination  goto 50
+	altitude  goto 51
+	temperature  goto 52
+	acceleration  goto 53
+	camera_on  goto 54
+	camera_off  goto 55
+	picture  goto 56
+	capture  goto 57
+	connect  goto 58
+	time  goto 59
+	get_timer  goto 60
+	var  goto 61
+
+
+state 45
+	stmt : matched .  (20)
+
+	.  reduce 20
+
+
+state 46
+	stmt : unmatched .  (21)
+
+	.  reduce 21
+
+
+state 47
+	matched : non_if_stmts .  (23)
+
+	.  reduce 23
+
+
+state 48
+	non_if_stmts : assignment .  (26)
+
+	.  reduce 26
+
+
+state 49
+	non_if_stmts : primitive_func .  (27)
+
+	.  reduce 27
+
+
+state 50
+	primitive_func : inclination .  (31)
+
+	.  reduce 31
+
+
+state 51
+	primitive_func : altitude .  (32)
+
+	.  reduce 32
+
+
+state 52
+	primitive_func : temperature .  (33)
+
+	.  reduce 33
+
+
+state 53
+	primitive_func : acceleration .  (34)
+
+	.  reduce 34
+
+
+state 54
+	primitive_func : camera_on .  (35)
+
+	.  reduce 35
+
+
+state 55
+	primitive_func : camera_off .  (36)
+
+	.  reduce 36
+
+
+state 56
+	primitive_func : picture .  (37)
+
+	.  reduce 37
+
+
+state 57
+	primitive_func : capture .  (38)
+
+	.  reduce 38
+
+
+state 58
+	primitive_func : connect .  (39)
+
+	.  reduce 39
+
+
+state 59
+	primitive_func : time .  (40)
+
+	.  reduce 40
+
+
+state 60
+	primitive_func : get_timer .  (41)
+
+	.  reduce 41
+
+
+state 61
+	assignment : var . ASGN_OP var  (66)
+	assignment : var . ASGN_OP log_stmts  (67)
+	assignment : var . ASGN_OP math_expr  (68)
+	assignment : var . ASGN_OP VARIABLE BELONGS func_start  (69)
+
+	ASGN_OP  shift 83
+	.  error
+
+
+state 62
+	parameter_list : ident_type parameter COMMA SMALLER_THAN parameter_list . BIGGER_THAN  (9)
+
+	BIGGER_THAN  shift 84
+	.  error
+
+
+state 63
+	not_cond : NOT . log_stmts  (60)
+
+	NOT  shift 63
+	.  error
+
+	log_stmts  goto 85
+	and_cond  goto 65
+	not_cond  goto 66
+
+
+64: shift/reduce conflict (shift 86, reduce 61) on OR
+64: shift/reduce conflict (shift 87, reduce 61) on END_STATEMENT
+state 64
+	matched : IF log_stmts . END_STATEMENT matched ELSE END_STATEMENT matched  (22)
+	unmatched : IF log_stmts . END_STATEMENT stmt  (24)
+	unmatched : IF log_stmts . END_STATEMENT matched ELSE END_STATEMENT unmatched  (25)
+	log_stmts : log_stmts . OR and_cond  (56)
+	not_cond : log_stmts .  (61)
+
+	OR  shift 86
+	END_STATEMENT  shift 87
+	AND  reduce 61
+
+
+65: shift/reduce conflict (shift 88, reduce 57) on AND
+state 65
+	log_stmts : and_cond .  (57)
+	and_cond : and_cond . AND not_cond  (58)
+
+	AND  shift 88
+	IF  reduce 57
+	ELSE  reduce 57
+	DRONE  reduce 57
+	TIMER  reduce 57
+	TYPE_STRING  reduce 57
+	TYPE_FLOAT  reduce 57
+	TYPE_INT  reduce 57
+	TYPE_BOOL  reduce 57
+	RETURN  reduce 57
+	WHILE_LOOP  reduce 57
+	FOR_LOOP  reduce 57
+	OR  reduce 57
+	PRINT_STATEMENT  reduce 57
+	VOID_FUNC  reduce 57
+	INCLINE_FUNC  reduce 57
+	ALTITUDE_FUNC  reduce 57
+	ACCEL_FUNC  reduce 57
+	TEMPR_FUNC  reduce 57
+	ON_FUNC  reduce 57
+	OFF_FUNC  reduce 57
+	PICTURE_FUNC  reduce 57
+	CAPTURE_FUNC  reduce 57
+	CONNECT_FUNC  reduce 57
+	TIME_FUNC  reduce 57
+	TIMER_FUNC  reduce 57
+	VARIABLE  reduce 57
+	END_STATEMENT  reduce 57
+	COMMENT  reduce 57
+
+
+state 66
+	and_cond : not_cond .  (59)
+
+	.  reduce 59
+
+
+state 67
+	inclination : INCLINE_FUNC LSQ . RSQ  (45)
+
+	RSQ  shift 89
+	.  error
+
+
+state 68
+	altitude : ALTITUDE_FUNC LSQ . RSQ END_STATEMENT  (46)
+
+	RSQ  shift 90
+	.  error
+
+
+state 69
+	acceleration : ACCEL_FUNC LSQ . RSQ END_STATEMENT  (48)
+
+	RSQ  shift 91
+	.  error
+
+
+state 70
+	temperature : TEMPR_FUNC LSQ . RSQ END_STATEMENT  (47)
+
+	RSQ  shift 92
+	.  error
+
+
+state 71
+	camera_on : ON_FUNC LSQ . variable RSQ END_STATEMENT  (49)
+
+	CONST  shift 21
+	VARIABLE  shift 22
+	.  error
+
+	variable  goto 93
+
+
+state 72
+	camera_off : OFF_FUNC LSQ . variable RSQ END_STATEMENT  (50)
+
+	CONST  shift 21
+	VARIABLE  shift 22
+	.  error
+
+	variable  goto 94
+
+
+73: shift/reduce conflict (shift 81, reduce 18) on COMMENT
+state 73
+	stmts : COMMENT stmts .  (18)
+	stmts : stmts . COMMENT  (19)
+
+	COMMENT  shift 81
+	RETURN  reduce 18
+
+
+state 74
+	picture : ident_type PICTURE_FUNC . LSQ variable RSQ END_STATEMENT  (51)
+
+	LSQ  shift 95
+	.  error
+
+
+state 75
+	capture : ident_type CAPTURE_FUNC . LSQ RSQ END_STATEMENT  (52)
+
+	LSQ  shift 96
+	.  error
+
+
+state 76
+	connect : ident_type CONNECT_FUNC . LSQ variable COMMA variable RSQ END_STATEMENT  (53)
+
+	LSQ  shift 97
+	.  error
+
+
+state 77
+	time : ident_type TIME_FUNC . LSQ variable RSQ END_STATEMENT  (54)
+
+	LSQ  shift 98
+	.  error
+
+
+state 78
+	get_timer : ident_type TIMER_FUNC . LSQ variable RSQ END_STATEMENT  (55)
+
+	LSQ  shift 99
+	.  error
+
+
+state 79
+	assignment : ident_type var . ASGN_OP log_stmts  (62)
+	assignment : ident_type var . ASGN_OP math_expr  (63)
+	assignment : ident_type var . ASGN_OP var BELONGS func_start  (64)
+	assignment : ident_type var . ASGN_OP dronic  (65)
+
+	ASGN_OP  shift 100
+	.  error
+
+
+state 80
+	body : stmts RETURN . variable  (15)
+
+	CONST  shift 21
+	VARIABLE  shift 22
+	.  error
+
+	variable  goto 101
+
+
+state 81
+	stmts : stmts COMMENT .  (19)
+
+	.  reduce 19
+
+
+82: shift/reduce conflict (shift 81, reduce 17) on COMMENT
+state 82
+	stmts : stmt stmts .  (17)
+	stmts : stmts . COMMENT  (19)
+
+	COMMENT  shift 81
+	RETURN  reduce 17
+
+
+83: shift/reduce conflict (shift 102, reduce 90) on VARIABLE
+83: shift/reduce conflict (shift 103, reduce 90) on ADD
+83: shift/reduce conflict (shift 104, reduce 90) on SUBTRACT
+state 83
+	assignment : var ASGN_OP . var  (66)
+	assignment : var ASGN_OP . log_stmts  (67)
+	assignment : var ASGN_OP . math_expr  (68)
+	assignment : var ASGN_OP . VARIABLE BELONGS func_start  (69)
+	factor : .  (90)
+
+	NOT  shift 63
+	VARIABLE  shift 102
+	ADD  shift 103
+	SUBTRACT  shift 104
+	IF  reduce 90
+	ELSE  reduce 90
+	DRONE  reduce 90
+	TIMER  reduce 90
+	TYPE_STRING  reduce 90
+	TYPE_FLOAT  reduce 90
+	TYPE_INT  reduce 90
+	TYPE_BOOL  reduce 90
+	RETURN  reduce 90
+	WHILE_LOOP  reduce 90
+	FOR_LOOP  reduce 90
+	PRINT_STATEMENT  reduce 90
+	VOID_FUNC  reduce 90
+	INCLINE_FUNC  reduce 90
+	ALTITUDE_FUNC  reduce 90
+	ACCEL_FUNC  reduce 90
+	TEMPR_FUNC  reduce 90
+	ON_FUNC  reduce 90
+	OFF_FUNC  reduce 90
+	PICTURE_FUNC  reduce 90
+	CAPTURE_FUNC  reduce 90
+	CONNECT_FUNC  reduce 90
+	TIME_FUNC  reduce 90
+	TIMER_FUNC  reduce 90
+	MULTIPLY  reduce 90
+	COMMENT  reduce 90
+
+	log_stmts  goto 105
+	var  goto 106
+	and_cond  goto 65
+	not_cond  goto 66
+	math_expr  goto 107
+	term  goto 108
+	factor  goto 109
+
+
+state 84
+	parameter_list : ident_type parameter COMMA SMALLER_THAN parameter_list BIGGER_THAN .  (9)
+
+	.  reduce 9
+
+
+85: reduce/reduce conflict (reduce 60, reduce 61) on IF
+85: reduce/reduce conflict (reduce 60, reduce 61) on ELSE
+85: reduce/reduce conflict (reduce 60, reduce 61) on DRONE
+85: reduce/reduce conflict (reduce 60, reduce 61) on TIMER
+85: reduce/reduce conflict (reduce 60, reduce 61) on TYPE_STRING
+85: reduce/reduce conflict (reduce 60, reduce 61) on TYPE_FLOAT
+85: reduce/reduce conflict (reduce 60, reduce 61) on TYPE_INT
+85: reduce/reduce conflict (reduce 60, reduce 61) on TYPE_BOOL
+85: reduce/reduce conflict (reduce 60, reduce 61) on RETURN
+85: reduce/reduce conflict (reduce 60, reduce 61) on WHILE_LOOP
+85: reduce/reduce conflict (reduce 60, reduce 61) on FOR_LOOP
+85: shift/reduce conflict (shift 86, reduce 60) on OR
+85: shift/reduce conflict (shift 86, reduce 61) on OR
+85: reduce/reduce conflict (reduce 60, reduce 61) on AND
+85: reduce/reduce conflict (reduce 60, reduce 61) on PRINT_STATEMENT
+85: reduce/reduce conflict (reduce 60, reduce 61) on VOID_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on INCLINE_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on ALTITUDE_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on ACCEL_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on TEMPR_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on ON_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on OFF_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on PICTURE_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on CAPTURE_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on CONNECT_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on TIME_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on TIMER_FUNC
+85: reduce/reduce conflict (reduce 60, reduce 61) on VARIABLE
+85: reduce/reduce conflict (reduce 60, reduce 61) on END_STATEMENT
+85: reduce/reduce conflict (reduce 60, reduce 61) on COMMENT
+state 85
+	log_stmts : log_stmts . OR and_cond  (56)
+	not_cond : NOT log_stmts .  (60)
+	not_cond : log_stmts .  (61)
+
+	OR  shift 86
+	IF  reduce 60
+	ELSE  reduce 60
+	DRONE  reduce 60
+	TIMER  reduce 60
+	TYPE_STRING  reduce 60
+	TYPE_FLOAT  reduce 60
+	TYPE_INT  reduce 60
+	TYPE_BOOL  reduce 60
+	RETURN  reduce 60
+	WHILE_LOOP  reduce 60
+	FOR_LOOP  reduce 60
+	AND  reduce 60
+	PRINT_STATEMENT  reduce 60
+	VOID_FUNC  reduce 60
+	INCLINE_FUNC  reduce 60
+	ALTITUDE_FUNC  reduce 60
+	ACCEL_FUNC  reduce 60
+	TEMPR_FUNC  reduce 60
+	ON_FUNC  reduce 60
+	OFF_FUNC  reduce 60
+	PICTURE_FUNC  reduce 60
+	CAPTURE_FUNC  reduce 60
+	CONNECT_FUNC  reduce 60
+	TIME_FUNC  reduce 60
+	TIMER_FUNC  reduce 60
+	VARIABLE  reduce 60
+	END_STATEMENT  reduce 60
+	COMMENT  reduce 60
+
+
+state 86
+	log_stmts : log_stmts OR . and_cond  (56)
+
+	NOT  shift 63
+	.  error
+
+	log_stmts  goto 110
+	and_cond  goto 111
+	not_cond  goto 66
+
+
+87: shift/reduce conflict (shift 39, reduce 109) on VARIABLE
+state 87
+	matched : IF log_stmts END_STATEMENT . matched ELSE END_STATEMENT matched  (22)
+	unmatched : IF log_stmts END_STATEMENT . stmt  (24)
+	unmatched : IF log_stmts END_STATEMENT . matched ELSE END_STATEMENT unmatched  (25)
+	ident_type : .  (109)
+
+	IF  shift 29
+	DRONE  shift 4
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	WHILE_LOOP  shift 30
+	FOR_LOOP  shift 31
+	PRINT_STATEMENT  shift 32
+	VOID_FUNC  shift 10
+	INCLINE_FUNC  shift 33
+	ALTITUDE_FUNC  shift 34
+	ACCEL_FUNC  shift 35
+	TEMPR_FUNC  shift 36
+	ON_FUNC  shift 37
+	OFF_FUNC  shift 38
+	VARIABLE  shift 39
+	PICTURE_FUNC  reduce 109
+	CAPTURE_FUNC  reduce 109
+	CONNECT_FUNC  reduce 109
+	TIME_FUNC  reduce 109
+	TIMER_FUNC  reduce 109
+
+	ident_type  goto 41
+	stmt  goto 112
+	matched  goto 113
+	unmatched  goto 46
+	non_if_stmts  goto 47
+	assignment  goto 48
+	primitive_func  goto 49
+	inclination  goto 50
+	altitude  goto 51
+	temperature  goto 52
+	acceleration  goto 53
+	camera_on  goto 54
+	camera_off  goto 55
+	picture  goto 56
+	capture  goto 57
+	connect  goto 58
+	time  goto 59
+	get_timer  goto 60
+	var  goto 61
+
+
+state 88
+	and_cond : and_cond AND . not_cond  (58)
+
+	NOT  shift 63
+	.  error
+
+	log_stmts  goto 110
+	and_cond  goto 65
+	not_cond  goto 114
+
+
+state 89
+	inclination : INCLINE_FUNC LSQ RSQ .  (45)
+
+	.  reduce 45
+
+
+state 90
+	altitude : ALTITUDE_FUNC LSQ RSQ . END_STATEMENT  (46)
+
+	END_STATEMENT  shift 115
+	.  error
+
+
+state 91
+	acceleration : ACCEL_FUNC LSQ RSQ . END_STATEMENT  (48)
+
+	END_STATEMENT  shift 116
+	.  error
+
+
+state 92
+	temperature : TEMPR_FUNC LSQ RSQ . END_STATEMENT  (47)
+
+	END_STATEMENT  shift 117
+	.  error
+
+
+state 93
+	camera_on : ON_FUNC LSQ variable . RSQ END_STATEMENT  (49)
+
+	RSQ  shift 118
+	.  error
+
+
+state 94
+	camera_off : OFF_FUNC LSQ variable . RSQ END_STATEMENT  (50)
+
+	RSQ  shift 119
+	.  error
+
+
+state 95
+	picture : ident_type PICTURE_FUNC LSQ . variable RSQ END_STATEMENT  (51)
+
+	CONST  shift 21
+	VARIABLE  shift 22
+	.  error
+
+	variable  goto 120
+
+
+state 96
+	capture : ident_type CAPTURE_FUNC LSQ . RSQ END_STATEMENT  (52)
+
+	RSQ  shift 121
+	.  error
+
+
+state 97
+	connect : ident_type CONNECT_FUNC LSQ . variable COMMA variable RSQ END_STATEMENT  (53)
+
+	CONST  shift 21
+	VARIABLE  shift 22
+	.  error
+
+	variable  goto 122
+
+
+state 98
+	time : ident_type TIME_FUNC LSQ . variable RSQ END_STATEMENT  (54)
+
+	CONST  shift 21
+	VARIABLE  shift 22
+	.  error
+
+	variable  goto 123
+
+
+state 99
+	get_timer : ident_type TIMER_FUNC LSQ . variable RSQ END_STATEMENT  (55)
+
+	CONST  shift 21
+	VARIABLE  shift 22
+	.  error
+
+	variable  goto 124
+
+
+100: shift/reduce conflict (shift 125, reduce 90) on TYPE_STRING
+100: shift/reduce conflict (shift 126, reduce 90) on TYPE_FLOAT
+100: shift/reduce conflict (shift 127, reduce 90) on TYPE_INT
+100: shift/reduce conflict (shift 128, reduce 90) on TYPE_BOOL
+100: shift/reduce conflict (shift 39, reduce 90) on VARIABLE
+100: shift/reduce conflict (shift 103, reduce 90) on ADD
+100: shift/reduce conflict (shift 104, reduce 90) on SUBTRACT
+state 100
+	assignment : ident_type var ASGN_OP . log_stmts  (62)
+	assignment : ident_type var ASGN_OP . math_expr  (63)
+	assignment : ident_type var ASGN_OP . var BELONGS func_start  (64)
+	assignment : ident_type var ASGN_OP . dronic  (65)
+	factor : .  (90)
+
+	TYPE_STRING  shift 125
+	TYPE_FLOAT  shift 126
+	TYPE_INT  shift 127
+	TYPE_BOOL  shift 128
+	NOT  shift 63
+	VARIABLE  shift 39
+	ADD  shift 103
+	SUBTRACT  shift 104
+	IF  reduce 90
+	ELSE  reduce 90
+	DRONE  reduce 90
+	TIMER  reduce 90
+	RETURN  reduce 90
+	WHILE_LOOP  reduce 90
+	FOR_LOOP  reduce 90
+	PRINT_STATEMENT  reduce 90
+	VOID_FUNC  reduce 90
+	INCLINE_FUNC  reduce 90
+	ALTITUDE_FUNC  reduce 90
+	ACCEL_FUNC  reduce 90
+	TEMPR_FUNC  reduce 90
+	ON_FUNC  reduce 90
+	OFF_FUNC  reduce 90
+	PICTURE_FUNC  reduce 90
+	CAPTURE_FUNC  reduce 90
+	CONNECT_FUNC  reduce 90
+	TIME_FUNC  reduce 90
+	TIMER_FUNC  reduce 90
+	MULTIPLY  reduce 90
+	COMMENT  reduce 90
+
+	log_stmts  goto 129
+	var  goto 130
+	and_cond  goto 65
+	not_cond  goto 66
+	math_expr  goto 131
+	dronic  goto 132
+	term  goto 108
+	factor  goto 109
+
+
+state 101
+	body : stmts RETURN variable .  (15)
+
+	.  reduce 15
+
+
+state 102
+	assignment : var ASGN_OP VARIABLE . BELONGS func_start  (69)
+	var : VARIABLE .  (82)
+
+	BELONGS  shift 133
+	IF  reduce 82
+	ELSE  reduce 82
+	DRONE  reduce 82
+	TIMER  reduce 82
+	TYPE_STRING  reduce 82
+	TYPE_FLOAT  reduce 82
+	TYPE_INT  reduce 82
+	TYPE_BOOL  reduce 82
+	RETURN  reduce 82
+	WHILE_LOOP  reduce 82
+	FOR_LOOP  reduce 82
+	PRINT_STATEMENT  reduce 82
+	VOID_FUNC  reduce 82
+	INCLINE_FUNC  reduce 82
+	ALTITUDE_FUNC  reduce 82
+	ACCEL_FUNC  reduce 82
+	TEMPR_FUNC  reduce 82
+	ON_FUNC  reduce 82
+	OFF_FUNC  reduce 82
+	PICTURE_FUNC  reduce 82
+	CAPTURE_FUNC  reduce 82
+	CONNECT_FUNC  reduce 82
+	TIME_FUNC  reduce 82
+	TIMER_FUNC  reduce 82
+	VARIABLE  reduce 82
+	COMMENT  reduce 82
+
+
+103: shift/reduce conflict (shift 103, reduce 90) on ADD
+103: shift/reduce conflict (shift 104, reduce 90) on SUBTRACT
+state 103
+	factor : ADD . factor  (91)
+	factor : .  (90)
+
+	ADD  shift 103
+	SUBTRACT  shift 104
+	IF  reduce 90
+	ELSE  reduce 90
+	DRONE  reduce 90
+	TIMER  reduce 90
+	TYPE_STRING  reduce 90
+	TYPE_FLOAT  reduce 90
+	TYPE_INT  reduce 90
+	TYPE_BOOL  reduce 90
+	RETURN  reduce 90
+	WHILE_LOOP  reduce 90
+	FOR_LOOP  reduce 90
+	PRINT_STATEMENT  reduce 90
+	VOID_FUNC  reduce 90
+	INCLINE_FUNC  reduce 90
+	ALTITUDE_FUNC  reduce 90
+	ACCEL_FUNC  reduce 90
+	TEMPR_FUNC  reduce 90
+	ON_FUNC  reduce 90
+	OFF_FUNC  reduce 90
+	PICTURE_FUNC  reduce 90
+	CAPTURE_FUNC  reduce 90
+	CONNECT_FUNC  reduce 90
+	TIME_FUNC  reduce 90
+	TIMER_FUNC  reduce 90
+	VARIABLE  reduce 90
+	MULTIPLY  reduce 90
+	COMMENT  reduce 90
+
+	factor  goto 134
+
+
+104: shift/reduce conflict (shift 103, reduce 90) on ADD
+104: shift/reduce conflict (shift 104, reduce 90) on SUBTRACT
+state 104
+	factor : SUBTRACT . factor  (92)
+	factor : .  (90)
+
+	ADD  shift 103
+	SUBTRACT  shift 104
+	IF  reduce 90
+	ELSE  reduce 90
+	DRONE  reduce 90
+	TIMER  reduce 90
+	TYPE_STRING  reduce 90
+	TYPE_FLOAT  reduce 90
+	TYPE_INT  reduce 90
+	TYPE_BOOL  reduce 90
+	RETURN  reduce 90
+	WHILE_LOOP  reduce 90
+	FOR_LOOP  reduce 90
+	PRINT_STATEMENT  reduce 90
+	VOID_FUNC  reduce 90
+	INCLINE_FUNC  reduce 90
+	ALTITUDE_FUNC  reduce 90
+	ACCEL_FUNC  reduce 90
+	TEMPR_FUNC  reduce 90
+	ON_FUNC  reduce 90
+	OFF_FUNC  reduce 90
+	PICTURE_FUNC  reduce 90
+	CAPTURE_FUNC  reduce 90
+	CONNECT_FUNC  reduce 90
+	TIME_FUNC  reduce 90
+	TIMER_FUNC  reduce 90
+	VARIABLE  reduce 90
+	MULTIPLY  reduce 90
+	COMMENT  reduce 90
+
+	factor  goto 135
+
+
+105: reduce/reduce conflict (reduce 61, reduce 67) on IF
+105: reduce/reduce conflict (reduce 61, reduce 67) on ELSE
+105: reduce/reduce conflict (reduce 61, reduce 67) on DRONE
+105: reduce/reduce conflict (reduce 61, reduce 67) on TIMER
+105: reduce/reduce conflict (reduce 61, reduce 67) on TYPE_STRING
+105: reduce/reduce conflict (reduce 61, reduce 67) on TYPE_FLOAT
+105: reduce/reduce conflict (reduce 61, reduce 67) on TYPE_INT
+105: reduce/reduce conflict (reduce 61, reduce 67) on TYPE_BOOL
+105: reduce/reduce conflict (reduce 61, reduce 67) on RETURN
+105: reduce/reduce conflict (reduce 61, reduce 67) on WHILE_LOOP
+105: reduce/reduce conflict (reduce 61, reduce 67) on FOR_LOOP
+105: shift/reduce conflict (shift 86, reduce 61) on OR
+105: reduce/reduce conflict (reduce 61, reduce 67) on PRINT_STATEMENT
+105: reduce/reduce conflict (reduce 61, reduce 67) on VOID_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on INCLINE_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on ALTITUDE_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on ACCEL_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on TEMPR_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on ON_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on OFF_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on PICTURE_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on CAPTURE_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on CONNECT_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on TIME_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on TIMER_FUNC
+105: reduce/reduce conflict (reduce 61, reduce 67) on VARIABLE
+105: reduce/reduce conflict (reduce 61, reduce 67) on COMMENT
+state 105
+	log_stmts : log_stmts . OR and_cond  (56)
+	not_cond : log_stmts .  (61)
+	assignment : var ASGN_OP log_stmts .  (67)
+
+	OR  shift 86
+	IF  reduce 61
+	ELSE  reduce 61
+	DRONE  reduce 61
+	TIMER  reduce 61
+	TYPE_STRING  reduce 61
+	TYPE_FLOAT  reduce 61
+	TYPE_INT  reduce 61
+	TYPE_BOOL  reduce 61
+	RETURN  reduce 61
+	WHILE_LOOP  reduce 61
+	FOR_LOOP  reduce 61
+	AND  reduce 61
+	PRINT_STATEMENT  reduce 61
+	VOID_FUNC  reduce 61
+	INCLINE_FUNC  reduce 61
+	ALTITUDE_FUNC  reduce 61
+	ACCEL_FUNC  reduce 61
+	TEMPR_FUNC  reduce 61
+	ON_FUNC  reduce 61
+	OFF_FUNC  reduce 61
+	PICTURE_FUNC  reduce 61
+	CAPTURE_FUNC  reduce 61
+	CONNECT_FUNC  reduce 61
+	TIME_FUNC  reduce 61
+	TIMER_FUNC  reduce 61
+	VARIABLE  reduce 61
+	COMMENT  reduce 61
+
+
+state 106
+	assignment : var ASGN_OP var .  (66)
+
+	.  reduce 66
+
+
+state 107
+	assignment : var ASGN_OP math_expr .  (68)
+	math_expr : math_expr . ADD term  (83)
+	math_expr : math_expr . SUBTRACT term  (84)
+
+	ADD  shift 136
+	SUBTRACT  shift 137
+	IF  reduce 68
+	ELSE  reduce 68
+	DRONE  reduce 68
+	TIMER  reduce 68
+	TYPE_STRING  reduce 68
+	TYPE_FLOAT  reduce 68
+	TYPE_INT  reduce 68
+	TYPE_BOOL  reduce 68
+	RETURN  reduce 68
+	WHILE_LOOP  reduce 68
+	FOR_LOOP  reduce 68
+	PRINT_STATEMENT  reduce 68
+	VOID_FUNC  reduce 68
+	INCLINE_FUNC  reduce 68
+	ALTITUDE_FUNC  reduce 68
+	ACCEL_FUNC  reduce 68
+	TEMPR_FUNC  reduce 68
+	ON_FUNC  reduce 68
+	OFF_FUNC  reduce 68
+	PICTURE_FUNC  reduce 68
+	CAPTURE_FUNC  reduce 68
+	CONNECT_FUNC  reduce 68
+	TIME_FUNC  reduce 68
+	TIMER_FUNC  reduce 68
+	VARIABLE  reduce 68
+	COMMENT  reduce 68
+
+
+108: reduce/reduce conflict (reduce 85, reduce 87) on IF
+108: reduce/reduce conflict (reduce 85, reduce 87) on ELSE
+108: reduce/reduce conflict (reduce 85, reduce 87) on DRONE
+108: reduce/reduce conflict (reduce 85, reduce 87) on TIMER
+108: reduce/reduce conflict (reduce 85, reduce 87) on TYPE_STRING
+108: reduce/reduce conflict (reduce 85, reduce 87) on TYPE_FLOAT
+108: reduce/reduce conflict (reduce 85, reduce 87) on TYPE_INT
+108: reduce/reduce conflict (reduce 85, reduce 87) on TYPE_BOOL
+108: reduce/reduce conflict (reduce 85, reduce 87) on RETURN
+108: reduce/reduce conflict (reduce 85, reduce 87) on WHILE_LOOP
+108: reduce/reduce conflict (reduce 85, reduce 87) on FOR_LOOP
+108: reduce/reduce conflict (reduce 85, reduce 87) on PRINT_STATEMENT
+108: reduce/reduce conflict (reduce 85, reduce 87) on VOID_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on INCLINE_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on ALTITUDE_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on ACCEL_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on TEMPR_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on ON_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on OFF_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on PICTURE_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on CAPTURE_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on CONNECT_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on TIME_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on TIMER_FUNC
+108: reduce/reduce conflict (reduce 85, reduce 87) on VARIABLE
+108: reduce/reduce conflict (reduce 85, reduce 87) on ADD
+108: reduce/reduce conflict (reduce 85, reduce 87) on SUBTRACT
+108: shift/reduce conflict (shift 138, reduce 87) on MULTIPLY
+108: reduce/reduce conflict (reduce 85, reduce 87) on COMMENT
+state 108
+	math_expr : term .  (85)
+	term : term . MULTIPLY factor  (86)
+	term : term .  (87)
+
+	MULTIPLY  shift 138
+	IF  reduce 85
+	ELSE  reduce 85
+	DRONE  reduce 85
+	TIMER  reduce 85
+	TYPE_STRING  reduce 85
+	TYPE_FLOAT  reduce 85
+	TYPE_INT  reduce 85
+	TYPE_BOOL  reduce 85
+	RETURN  reduce 85
+	WHILE_LOOP  reduce 85
+	FOR_LOOP  reduce 85
+	PRINT_STATEMENT  reduce 85
+	VOID_FUNC  reduce 85
+	INCLINE_FUNC  reduce 85
+	ALTITUDE_FUNC  reduce 85
+	ACCEL_FUNC  reduce 85
+	TEMPR_FUNC  reduce 85
+	ON_FUNC  reduce 85
+	OFF_FUNC  reduce 85
+	PICTURE_FUNC  reduce 85
+	CAPTURE_FUNC  reduce 85
+	CONNECT_FUNC  reduce 85
+	TIME_FUNC  reduce 85
+	TIMER_FUNC  reduce 85
+	VARIABLE  reduce 85
+	ADD  reduce 85
+	SUBTRACT  reduce 85
+	COMMENT  reduce 85
+
+
+109: reduce/reduce conflict (reduce 88, reduce 89) on IF
+109: reduce/reduce conflict (reduce 88, reduce 89) on ELSE
+109: reduce/reduce conflict (reduce 88, reduce 89) on DRONE
+109: reduce/reduce conflict (reduce 88, reduce 89) on TIMER
+109: reduce/reduce conflict (reduce 88, reduce 89) on TYPE_STRING
+109: reduce/reduce conflict (reduce 88, reduce 89) on TYPE_FLOAT
+109: reduce/reduce conflict (reduce 88, reduce 89) on TYPE_INT
+109: reduce/reduce conflict (reduce 88, reduce 89) on TYPE_BOOL
+109: reduce/reduce conflict (reduce 88, reduce 89) on RETURN
+109: reduce/reduce conflict (reduce 88, reduce 89) on WHILE_LOOP
+109: reduce/reduce conflict (reduce 88, reduce 89) on FOR_LOOP
+109: reduce/reduce conflict (reduce 88, reduce 89) on PRINT_STATEMENT
+109: reduce/reduce conflict (reduce 88, reduce 89) on VOID_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on INCLINE_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on ALTITUDE_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on ACCEL_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on TEMPR_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on ON_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on OFF_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on PICTURE_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on CAPTURE_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on CONNECT_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on TIME_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on TIMER_FUNC
+109: reduce/reduce conflict (reduce 88, reduce 89) on VARIABLE
+109: reduce/reduce conflict (reduce 88, reduce 89) on ADD
+109: reduce/reduce conflict (reduce 88, reduce 89) on SUBTRACT
+109: reduce/reduce conflict (reduce 88, reduce 89) on MULTIPLY
+109: reduce/reduce conflict (reduce 88, reduce 89) on COMMENT
+state 109
+	term : factor .  (88)
+	term : factor .  (89)
+
+	.  reduce 88
+
+
+110: shift/reduce conflict (shift 86, reduce 61) on OR
+state 110
+	log_stmts : log_stmts . OR and_cond  (56)
+	not_cond : log_stmts .  (61)
+
+	OR  shift 86
+	IF  reduce 61
+	ELSE  reduce 61
+	DRONE  reduce 61
+	TIMER  reduce 61
+	TYPE_STRING  reduce 61
+	TYPE_FLOAT  reduce 61
+	TYPE_INT  reduce 61
+	TYPE_BOOL  reduce 61
+	RETURN  reduce 61
+	WHILE_LOOP  reduce 61
+	FOR_LOOP  reduce 61
+	AND  reduce 61
+	PRINT_STATEMENT  reduce 61
+	VOID_FUNC  reduce 61
+	INCLINE_FUNC  reduce 61
+	ALTITUDE_FUNC  reduce 61
+	ACCEL_FUNC  reduce 61
+	TEMPR_FUNC  reduce 61
+	ON_FUNC  reduce 61
+	OFF_FUNC  reduce 61
+	PICTURE_FUNC  reduce 61
+	CAPTURE_FUNC  reduce 61
+	CONNECT_FUNC  reduce 61
+	TIME_FUNC  reduce 61
+	TIMER_FUNC  reduce 61
+	VARIABLE  reduce 61
+	END_STATEMENT  reduce 61
+	COMMENT  reduce 61
+
+
+111: reduce/reduce conflict (reduce 56, reduce 57) on IF
+111: reduce/reduce conflict (reduce 56, reduce 57) on ELSE
+111: reduce/reduce conflict (reduce 56, reduce 57) on DRONE
+111: reduce/reduce conflict (reduce 56, reduce 57) on TIMER
+111: reduce/reduce conflict (reduce 56, reduce 57) on TYPE_STRING
+111: reduce/reduce conflict (reduce 56, reduce 57) on TYPE_FLOAT
+111: reduce/reduce conflict (reduce 56, reduce 57) on TYPE_INT
+111: reduce/reduce conflict (reduce 56, reduce 57) on TYPE_BOOL
+111: reduce/reduce conflict (reduce 56, reduce 57) on RETURN
+111: reduce/reduce conflict (reduce 56, reduce 57) on WHILE_LOOP
+111: reduce/reduce conflict (reduce 56, reduce 57) on FOR_LOOP
+111: reduce/reduce conflict (reduce 56, reduce 57) on OR
+111: shift/reduce conflict (shift 88, reduce 56) on AND
+111: shift/reduce conflict (shift 88, reduce 57) on AND
+111: reduce/reduce conflict (reduce 56, reduce 57) on PRINT_STATEMENT
+111: reduce/reduce conflict (reduce 56, reduce 57) on VOID_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on INCLINE_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on ALTITUDE_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on ACCEL_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on TEMPR_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on ON_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on OFF_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on PICTURE_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on CAPTURE_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on CONNECT_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on TIME_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on TIMER_FUNC
+111: reduce/reduce conflict (reduce 56, reduce 57) on VARIABLE
+111: reduce/reduce conflict (reduce 56, reduce 57) on END_STATEMENT
+111: reduce/reduce conflict (reduce 56, reduce 57) on COMMENT
+state 111
+	log_stmts : log_stmts OR and_cond .  (56)
+	log_stmts : and_cond .  (57)
+	and_cond : and_cond . AND not_cond  (58)
+
+	AND  shift 88
+	IF  reduce 56
+	ELSE  reduce 56
+	DRONE  reduce 56
+	TIMER  reduce 56
+	TYPE_STRING  reduce 56
+	TYPE_FLOAT  reduce 56
+	TYPE_INT  reduce 56
+	TYPE_BOOL  reduce 56
+	RETURN  reduce 56
+	WHILE_LOOP  reduce 56
+	FOR_LOOP  reduce 56
+	OR  reduce 56
+	PRINT_STATEMENT  reduce 56
+	VOID_FUNC  reduce 56
+	INCLINE_FUNC  reduce 56
+	ALTITUDE_FUNC  reduce 56
+	ACCEL_FUNC  reduce 56
+	TEMPR_FUNC  reduce 56
+	ON_FUNC  reduce 56
+	OFF_FUNC  reduce 56
+	PICTURE_FUNC  reduce 56
+	CAPTURE_FUNC  reduce 56
+	CONNECT_FUNC  reduce 56
+	TIME_FUNC  reduce 56
+	TIMER_FUNC  reduce 56
+	VARIABLE  reduce 56
+	END_STATEMENT  reduce 56
+	COMMENT  reduce 56
+
+
+state 112
+	unmatched : IF log_stmts END_STATEMENT stmt .  (24)
+
+	.  reduce 24
+
+
+state 113
+	stmt : matched .  (20)
+	matched : IF log_stmts END_STATEMENT matched . ELSE END_STATEMENT matched  (22)
+	unmatched : IF log_stmts END_STATEMENT matched . ELSE END_STATEMENT unmatched  (25)
+
+	ELSE  shift 139
+	IF  reduce 20
+	DRONE  reduce 20
+	TIMER  reduce 20
+	TYPE_STRING  reduce 20
+	TYPE_FLOAT  reduce 20
+	TYPE_INT  reduce 20
+	TYPE_BOOL  reduce 20
+	RETURN  reduce 20
+	WHILE_LOOP  reduce 20
+	FOR_LOOP  reduce 20
+	PRINT_STATEMENT  reduce 20
+	VOID_FUNC  reduce 20
+	INCLINE_FUNC  reduce 20
+	ALTITUDE_FUNC  reduce 20
+	ACCEL_FUNC  reduce 20
+	TEMPR_FUNC  reduce 20
+	ON_FUNC  reduce 20
+	OFF_FUNC  reduce 20
+	PICTURE_FUNC  reduce 20
+	CAPTURE_FUNC  reduce 20
+	CONNECT_FUNC  reduce 20
+	TIME_FUNC  reduce 20
+	TIMER_FUNC  reduce 20
+	VARIABLE  reduce 20
+	COMMENT  reduce 20
+
+
+114: reduce/reduce conflict (reduce 58, reduce 59) on IF
+114: reduce/reduce conflict (reduce 58, reduce 59) on ELSE
+114: reduce/reduce conflict (reduce 58, reduce 59) on DRONE
+114: reduce/reduce conflict (reduce 58, reduce 59) on TIMER
+114: reduce/reduce conflict (reduce 58, reduce 59) on TYPE_STRING
+114: reduce/reduce conflict (reduce 58, reduce 59) on TYPE_FLOAT
+114: reduce/reduce conflict (reduce 58, reduce 59) on TYPE_INT
+114: reduce/reduce conflict (reduce 58, reduce 59) on TYPE_BOOL
+114: reduce/reduce conflict (reduce 58, reduce 59) on RETURN
+114: reduce/reduce conflict (reduce 58, reduce 59) on WHILE_LOOP
+114: reduce/reduce conflict (reduce 58, reduce 59) on FOR_LOOP
+114: reduce/reduce conflict (reduce 58, reduce 59) on OR
+114: reduce/reduce conflict (reduce 58, reduce 59) on AND
+114: reduce/reduce conflict (reduce 58, reduce 59) on PRINT_STATEMENT
+114: reduce/reduce conflict (reduce 58, reduce 59) on VOID_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on INCLINE_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on ALTITUDE_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on ACCEL_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on TEMPR_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on ON_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on OFF_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on PICTURE_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on CAPTURE_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on CONNECT_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on TIME_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on TIMER_FUNC
+114: reduce/reduce conflict (reduce 58, reduce 59) on VARIABLE
+114: reduce/reduce conflict (reduce 58, reduce 59) on END_STATEMENT
+114: reduce/reduce conflict (reduce 58, reduce 59) on COMMENT
+state 114
+	and_cond : and_cond AND not_cond .  (58)
+	and_cond : not_cond .  (59)
+
+	.  reduce 58
+
+
+state 115
+	altitude : ALTITUDE_FUNC LSQ RSQ END_STATEMENT .  (46)
+
+	.  reduce 46
+
+
+state 116
+	acceleration : ACCEL_FUNC LSQ RSQ END_STATEMENT .  (48)
+
+	.  reduce 48
+
+
+state 117
+	temperature : TEMPR_FUNC LSQ RSQ END_STATEMENT .  (47)
+
+	.  reduce 47
+
+
+state 118
+	camera_on : ON_FUNC LSQ variable RSQ . END_STATEMENT  (49)
+
+	END_STATEMENT  shift 140
+	.  error
+
+
+state 119
+	camera_off : OFF_FUNC LSQ variable RSQ . END_STATEMENT  (50)
+
+	END_STATEMENT  shift 141
+	.  error
+
+
+state 120
+	picture : ident_type PICTURE_FUNC LSQ variable . RSQ END_STATEMENT  (51)
+
+	RSQ  shift 142
+	.  error
+
+
+state 121
+	capture : ident_type CAPTURE_FUNC LSQ RSQ . END_STATEMENT  (52)
+
+	END_STATEMENT  shift 143
+	.  error
+
+
+state 122
+	connect : ident_type CONNECT_FUNC LSQ variable . COMMA variable RSQ END_STATEMENT  (53)
+
+	COMMA  shift 144
+	.  error
+
+
+state 123
+	time : ident_type TIME_FUNC LSQ variable . RSQ END_STATEMENT  (54)
+
+	RSQ  shift 145
+	.  error
+
+
+state 124
+	get_timer : ident_type TIMER_FUNC LSQ variable . RSQ END_STATEMENT  (55)
+
+	RSQ  shift 146
+	.  error
+
+
+state 125
+	dronic : TYPE_STRING .  (98)
+
+	.  reduce 98
+
+
+state 126
+	dronic : TYPE_FLOAT .  (99)
+
+	.  reduce 99
+
+
+state 127
+	dronic : TYPE_INT .  (100)
+
+	.  reduce 100
+
+
+state 128
+	dronic : TYPE_BOOL .  (101)
+
+	.  reduce 101
+
+
+129: reduce/reduce conflict (reduce 61, reduce 62) on IF
+129: reduce/reduce conflict (reduce 61, reduce 62) on ELSE
+129: reduce/reduce conflict (reduce 61, reduce 62) on DRONE
+129: reduce/reduce conflict (reduce 61, reduce 62) on TIMER
+129: reduce/reduce conflict (reduce 61, reduce 62) on TYPE_STRING
+129: reduce/reduce conflict (reduce 61, reduce 62) on TYPE_FLOAT
+129: reduce/reduce conflict (reduce 61, reduce 62) on TYPE_INT
+129: reduce/reduce conflict (reduce 61, reduce 62) on TYPE_BOOL
+129: reduce/reduce conflict (reduce 61, reduce 62) on RETURN
+129: reduce/reduce conflict (reduce 61, reduce 62) on WHILE_LOOP
+129: reduce/reduce conflict (reduce 61, reduce 62) on FOR_LOOP
+129: shift/reduce conflict (shift 86, reduce 61) on OR
+129: reduce/reduce conflict (reduce 61, reduce 62) on PRINT_STATEMENT
+129: reduce/reduce conflict (reduce 61, reduce 62) on VOID_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on INCLINE_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on ALTITUDE_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on ACCEL_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on TEMPR_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on ON_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on OFF_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on PICTURE_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on CAPTURE_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on CONNECT_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on TIME_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on TIMER_FUNC
+129: reduce/reduce conflict (reduce 61, reduce 62) on VARIABLE
+129: reduce/reduce conflict (reduce 61, reduce 62) on COMMENT
+state 129
+	log_stmts : log_stmts . OR and_cond  (56)
+	not_cond : log_stmts .  (61)
+	assignment : ident_type var ASGN_OP log_stmts .  (62)
+
+	OR  shift 86
+	IF  reduce 61
+	ELSE  reduce 61
+	DRONE  reduce 61
+	TIMER  reduce 61
+	TYPE_STRING  reduce 61
+	TYPE_FLOAT  reduce 61
+	TYPE_INT  reduce 61
+	TYPE_BOOL  reduce 61
+	RETURN  reduce 61
+	WHILE_LOOP  reduce 61
+	FOR_LOOP  reduce 61
+	AND  reduce 61
+	PRINT_STATEMENT  reduce 61
+	VOID_FUNC  reduce 61
+	INCLINE_FUNC  reduce 61
+	ALTITUDE_FUNC  reduce 61
+	ACCEL_FUNC  reduce 61
+	TEMPR_FUNC  reduce 61
+	ON_FUNC  reduce 61
+	OFF_FUNC  reduce 61
+	PICTURE_FUNC  reduce 61
+	CAPTURE_FUNC  reduce 61
+	CONNECT_FUNC  reduce 61
+	TIME_FUNC  reduce 61
+	TIMER_FUNC  reduce 61
+	VARIABLE  reduce 61
+	COMMENT  reduce 61
+
+
+state 130
+	assignment : ident_type var ASGN_OP var . BELONGS func_start  (64)
+
+	BELONGS  shift 147
+	.  error
+
+
+state 131
+	assignment : ident_type var ASGN_OP math_expr .  (63)
+	math_expr : math_expr . ADD term  (83)
+	math_expr : math_expr . SUBTRACT term  (84)
+
+	ADD  shift 136
+	SUBTRACT  shift 137
+	IF  reduce 63
+	ELSE  reduce 63
+	DRONE  reduce 63
+	TIMER  reduce 63
+	TYPE_STRING  reduce 63
+	TYPE_FLOAT  reduce 63
+	TYPE_INT  reduce 63
+	TYPE_BOOL  reduce 63
+	RETURN  reduce 63
+	WHILE_LOOP  reduce 63
+	FOR_LOOP  reduce 63
+	PRINT_STATEMENT  reduce 63
+	VOID_FUNC  reduce 63
+	INCLINE_FUNC  reduce 63
+	ALTITUDE_FUNC  reduce 63
+	ACCEL_FUNC  reduce 63
+	TEMPR_FUNC  reduce 63
+	ON_FUNC  reduce 63
+	OFF_FUNC  reduce 63
+	PICTURE_FUNC  reduce 63
+	CAPTURE_FUNC  reduce 63
+	CONNECT_FUNC  reduce 63
+	TIME_FUNC  reduce 63
+	TIMER_FUNC  reduce 63
+	VARIABLE  reduce 63
+	COMMENT  reduce 63
+
+
+state 132
+	assignment : ident_type var ASGN_OP dronic .  (65)
+
+	.  reduce 65
+
+
+state 133
+	assignment : var ASGN_OP VARIABLE BELONGS . func_start  (69)
+
+	VARIABLE  shift 16
+	.  error
+
+	function_name  goto 148
+	func_start  goto 149
+
+
+state 134
+	factor : ADD factor .  (91)
+
+	.  reduce 91
+
+
+state 135
+	factor : SUBTRACT factor .  (92)
+
+	.  reduce 92
+
+
+136: shift/reduce conflict (shift 103, reduce 90) on ADD
+136: shift/reduce conflict (shift 104, reduce 90) on SUBTRACT
+state 136
+	math_expr : math_expr ADD . term  (83)
+	factor : .  (90)
+
+	ADD  shift 103
+	SUBTRACT  shift 104
+	IF  reduce 90
+	ELSE  reduce 90
+	DRONE  reduce 90
+	TIMER  reduce 90
+	TYPE_STRING  reduce 90
+	TYPE_FLOAT  reduce 90
+	TYPE_INT  reduce 90
+	TYPE_BOOL  reduce 90
+	RETURN  reduce 90
+	WHILE_LOOP  reduce 90
+	FOR_LOOP  reduce 90
+	PRINT_STATEMENT  reduce 90
+	VOID_FUNC  reduce 90
+	INCLINE_FUNC  reduce 90
+	ALTITUDE_FUNC  reduce 90
+	ACCEL_FUNC  reduce 90
+	TEMPR_FUNC  reduce 90
+	ON_FUNC  reduce 90
+	OFF_FUNC  reduce 90
+	PICTURE_FUNC  reduce 90
+	CAPTURE_FUNC  reduce 90
+	CONNECT_FUNC  reduce 90
+	TIME_FUNC  reduce 90
+	TIMER_FUNC  reduce 90
+	VARIABLE  reduce 90
+	MULTIPLY  reduce 90
+	COMMENT  reduce 90
+
+	term  goto 150
+	factor  goto 109
+
+
+137: shift/reduce conflict (shift 103, reduce 90) on ADD
+137: shift/reduce conflict (shift 104, reduce 90) on SUBTRACT
+state 137
+	math_expr : math_expr SUBTRACT . term  (84)
+	factor : .  (90)
+
+	ADD  shift 103
+	SUBTRACT  shift 104
+	IF  reduce 90
+	ELSE  reduce 90
+	DRONE  reduce 90
+	TIMER  reduce 90
+	TYPE_STRING  reduce 90
+	TYPE_FLOAT  reduce 90
+	TYPE_INT  reduce 90
+	TYPE_BOOL  reduce 90
+	RETURN  reduce 90
+	WHILE_LOOP  reduce 90
+	FOR_LOOP  reduce 90
+	PRINT_STATEMENT  reduce 90
+	VOID_FUNC  reduce 90
+	INCLINE_FUNC  reduce 90
+	ALTITUDE_FUNC  reduce 90
+	ACCEL_FUNC  reduce 90
+	TEMPR_FUNC  reduce 90
+	ON_FUNC  reduce 90
+	OFF_FUNC  reduce 90
+	PICTURE_FUNC  reduce 90
+	CAPTURE_FUNC  reduce 90
+	CONNECT_FUNC  reduce 90
+	TIME_FUNC  reduce 90
+	TIMER_FUNC  reduce 90
+	VARIABLE  reduce 90
+	MULTIPLY  reduce 90
+	COMMENT  reduce 90
+
+	term  goto 151
+	factor  goto 109
+
+
+138: shift/reduce conflict (shift 103, reduce 90) on ADD
+138: shift/reduce conflict (shift 104, reduce 90) on SUBTRACT
+state 138
+	term : term MULTIPLY . factor  (86)
+	factor : .  (90)
+
+	ADD  shift 103
+	SUBTRACT  shift 104
+	IF  reduce 90
+	ELSE  reduce 90
+	DRONE  reduce 90
+	TIMER  reduce 90
+	TYPE_STRING  reduce 90
+	TYPE_FLOAT  reduce 90
+	TYPE_INT  reduce 90
+	TYPE_BOOL  reduce 90
+	RETURN  reduce 90
+	WHILE_LOOP  reduce 90
+	FOR_LOOP  reduce 90
+	PRINT_STATEMENT  reduce 90
+	VOID_FUNC  reduce 90
+	INCLINE_FUNC  reduce 90
+	ALTITUDE_FUNC  reduce 90
+	ACCEL_FUNC  reduce 90
+	TEMPR_FUNC  reduce 90
+	ON_FUNC  reduce 90
+	OFF_FUNC  reduce 90
+	PICTURE_FUNC  reduce 90
+	CAPTURE_FUNC  reduce 90
+	CONNECT_FUNC  reduce 90
+	TIME_FUNC  reduce 90
+	TIMER_FUNC  reduce 90
+	VARIABLE  reduce 90
+	MULTIPLY  reduce 90
+	COMMENT  reduce 90
+
+	factor  goto 152
+
+
+state 139
+	matched : IF log_stmts END_STATEMENT matched ELSE . END_STATEMENT matched  (22)
+	unmatched : IF log_stmts END_STATEMENT matched ELSE . END_STATEMENT unmatched  (25)
+
+	END_STATEMENT  shift 153
+	.  error
+
+
+state 140
+	camera_on : ON_FUNC LSQ variable RSQ END_STATEMENT .  (49)
+
+	.  reduce 49
+
+
+state 141
+	camera_off : OFF_FUNC LSQ variable RSQ END_STATEMENT .  (50)
+
+	.  reduce 50
+
+
+state 142
+	picture : ident_type PICTURE_FUNC LSQ variable RSQ . END_STATEMENT  (51)
+
+	END_STATEMENT  shift 154
+	.  error
+
+
+state 143
+	capture : ident_type CAPTURE_FUNC LSQ RSQ END_STATEMENT .  (52)
+
+	.  reduce 52
+
+
+state 144
+	connect : ident_type CONNECT_FUNC LSQ variable COMMA . variable RSQ END_STATEMENT  (53)
+
+	CONST  shift 21
+	VARIABLE  shift 22
+	.  error
+
+	variable  goto 155
+
+
+state 145
+	time : ident_type TIME_FUNC LSQ variable RSQ . END_STATEMENT  (54)
+
+	END_STATEMENT  shift 156
+	.  error
+
+
+state 146
+	get_timer : ident_type TIMER_FUNC LSQ variable RSQ . END_STATEMENT  (55)
+
+	END_STATEMENT  shift 157
+	.  error
+
+
+state 147
+	assignment : ident_type var ASGN_OP var BELONGS . func_start  (64)
+
+	VARIABLE  shift 16
+	.  error
+
+	function_name  goto 148
+	func_start  goto 158
+
+
+state 148
+	func_start : function_name . LSQ parameter_list RSQ  (7)
+
+	LSQ  shift 159
+	.  error
+
+
+state 149
+	assignment : var ASGN_OP VARIABLE BELONGS func_start .  (69)
+
+	.  reduce 69
+
+
+150: reduce/reduce conflict (reduce 83, reduce 87) on IF
+150: reduce/reduce conflict (reduce 83, reduce 87) on ELSE
+150: reduce/reduce conflict (reduce 83, reduce 87) on DRONE
+150: reduce/reduce conflict (reduce 83, reduce 87) on TIMER
+150: reduce/reduce conflict (reduce 83, reduce 87) on TYPE_STRING
+150: reduce/reduce conflict (reduce 83, reduce 87) on TYPE_FLOAT
+150: reduce/reduce conflict (reduce 83, reduce 87) on TYPE_INT
+150: reduce/reduce conflict (reduce 83, reduce 87) on TYPE_BOOL
+150: reduce/reduce conflict (reduce 83, reduce 87) on RETURN
+150: reduce/reduce conflict (reduce 83, reduce 87) on WHILE_LOOP
+150: reduce/reduce conflict (reduce 83, reduce 87) on FOR_LOOP
+150: reduce/reduce conflict (reduce 83, reduce 87) on PRINT_STATEMENT
+150: reduce/reduce conflict (reduce 83, reduce 87) on VOID_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on INCLINE_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on ALTITUDE_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on ACCEL_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on TEMPR_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on ON_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on OFF_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on PICTURE_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on CAPTURE_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on CONNECT_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on TIME_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on TIMER_FUNC
+150: reduce/reduce conflict (reduce 83, reduce 87) on VARIABLE
+150: reduce/reduce conflict (reduce 83, reduce 87) on ADD
+150: reduce/reduce conflict (reduce 83, reduce 87) on SUBTRACT
+150: shift/reduce conflict (shift 138, reduce 87) on MULTIPLY
+150: reduce/reduce conflict (reduce 83, reduce 87) on COMMENT
+state 150
+	math_expr : math_expr ADD term .  (83)
+	term : term . MULTIPLY factor  (86)
+	term : term .  (87)
+
+	MULTIPLY  shift 138
+	IF  reduce 83
+	ELSE  reduce 83
+	DRONE  reduce 83
+	TIMER  reduce 83
+	TYPE_STRING  reduce 83
+	TYPE_FLOAT  reduce 83
+	TYPE_INT  reduce 83
+	TYPE_BOOL  reduce 83
+	RETURN  reduce 83
+	WHILE_LOOP  reduce 83
+	FOR_LOOP  reduce 83
+	PRINT_STATEMENT  reduce 83
+	VOID_FUNC  reduce 83
+	INCLINE_FUNC  reduce 83
+	ALTITUDE_FUNC  reduce 83
+	ACCEL_FUNC  reduce 83
+	TEMPR_FUNC  reduce 83
+	ON_FUNC  reduce 83
+	OFF_FUNC  reduce 83
+	PICTURE_FUNC  reduce 83
+	CAPTURE_FUNC  reduce 83
+	CONNECT_FUNC  reduce 83
+	TIME_FUNC  reduce 83
+	TIMER_FUNC  reduce 83
+	VARIABLE  reduce 83
+	ADD  reduce 83
+	SUBTRACT  reduce 83
+	COMMENT  reduce 83
+
+
+151: reduce/reduce conflict (reduce 84, reduce 87) on IF
+151: reduce/reduce conflict (reduce 84, reduce 87) on ELSE
+151: reduce/reduce conflict (reduce 84, reduce 87) on DRONE
+151: reduce/reduce conflict (reduce 84, reduce 87) on TIMER
+151: reduce/reduce conflict (reduce 84, reduce 87) on TYPE_STRING
+151: reduce/reduce conflict (reduce 84, reduce 87) on TYPE_FLOAT
+151: reduce/reduce conflict (reduce 84, reduce 87) on TYPE_INT
+151: reduce/reduce conflict (reduce 84, reduce 87) on TYPE_BOOL
+151: reduce/reduce conflict (reduce 84, reduce 87) on RETURN
+151: reduce/reduce conflict (reduce 84, reduce 87) on WHILE_LOOP
+151: reduce/reduce conflict (reduce 84, reduce 87) on FOR_LOOP
+151: reduce/reduce conflict (reduce 84, reduce 87) on PRINT_STATEMENT
+151: reduce/reduce conflict (reduce 84, reduce 87) on VOID_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on INCLINE_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on ALTITUDE_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on ACCEL_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on TEMPR_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on ON_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on OFF_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on PICTURE_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on CAPTURE_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on CONNECT_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on TIME_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on TIMER_FUNC
+151: reduce/reduce conflict (reduce 84, reduce 87) on VARIABLE
+151: reduce/reduce conflict (reduce 84, reduce 87) on ADD
+151: reduce/reduce conflict (reduce 84, reduce 87) on SUBTRACT
+151: shift/reduce conflict (shift 138, reduce 87) on MULTIPLY
+151: reduce/reduce conflict (reduce 84, reduce 87) on COMMENT
+state 151
+	math_expr : math_expr SUBTRACT term .  (84)
+	term : term . MULTIPLY factor  (86)
+	term : term .  (87)
+
+	MULTIPLY  shift 138
+	IF  reduce 84
+	ELSE  reduce 84
+	DRONE  reduce 84
+	TIMER  reduce 84
+	TYPE_STRING  reduce 84
+	TYPE_FLOAT  reduce 84
+	TYPE_INT  reduce 84
+	TYPE_BOOL  reduce 84
+	RETURN  reduce 84
+	WHILE_LOOP  reduce 84
+	FOR_LOOP  reduce 84
+	PRINT_STATEMENT  reduce 84
+	VOID_FUNC  reduce 84
+	INCLINE_FUNC  reduce 84
+	ALTITUDE_FUNC  reduce 84
+	ACCEL_FUNC  reduce 84
+	TEMPR_FUNC  reduce 84
+	ON_FUNC  reduce 84
+	OFF_FUNC  reduce 84
+	PICTURE_FUNC  reduce 84
+	CAPTURE_FUNC  reduce 84
+	CONNECT_FUNC  reduce 84
+	TIME_FUNC  reduce 84
+	TIMER_FUNC  reduce 84
+	VARIABLE  reduce 84
+	ADD  reduce 84
+	SUBTRACT  reduce 84
+	COMMENT  reduce 84
+
+
+state 152
+	term : term MULTIPLY factor .  (86)
+
+	.  reduce 86
+
+
+153: shift/reduce conflict (shift 39, reduce 109) on VARIABLE
+state 153
+	matched : IF log_stmts END_STATEMENT matched ELSE END_STATEMENT . matched  (22)
+	unmatched : IF log_stmts END_STATEMENT matched ELSE END_STATEMENT . unmatched  (25)
+	ident_type : .  (109)
+
+	IF  shift 29
+	DRONE  shift 4
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	WHILE_LOOP  shift 30
+	FOR_LOOP  shift 31
+	PRINT_STATEMENT  shift 32
+	VOID_FUNC  shift 10
+	INCLINE_FUNC  shift 33
+	ALTITUDE_FUNC  shift 34
+	ACCEL_FUNC  shift 35
+	TEMPR_FUNC  shift 36
+	ON_FUNC  shift 37
+	OFF_FUNC  shift 38
+	VARIABLE  shift 39
+	PICTURE_FUNC  reduce 109
+	CAPTURE_FUNC  reduce 109
+	CONNECT_FUNC  reduce 109
+	TIME_FUNC  reduce 109
+	TIMER_FUNC  reduce 109
+
+	ident_type  goto 41
+	matched  goto 160
+	unmatched  goto 161
+	non_if_stmts  goto 47
+	assignment  goto 48
+	primitive_func  goto 49
+	inclination  goto 50
+	altitude  goto 51
+	temperature  goto 52
+	acceleration  goto 53
+	camera_on  goto 54
+	camera_off  goto 55
+	picture  goto 56
+	capture  goto 57
+	connect  goto 58
+	time  goto 59
+	get_timer  goto 60
+	var  goto 61
+
+
+state 154
+	picture : ident_type PICTURE_FUNC LSQ variable RSQ END_STATEMENT .  (51)
+
+	.  reduce 51
+
+
+state 155
+	connect : ident_type CONNECT_FUNC LSQ variable COMMA variable . RSQ END_STATEMENT  (53)
+
+	RSQ  shift 162
+	.  error
+
+
+state 156
+	time : ident_type TIME_FUNC LSQ variable RSQ END_STATEMENT .  (54)
+
+	.  reduce 54
+
+
+state 157
+	get_timer : ident_type TIMER_FUNC LSQ variable RSQ END_STATEMENT .  (55)
+
+	.  reduce 55
+
+
+state 158
+	assignment : ident_type var ASGN_OP var BELONGS func_start .  (64)
+
+	.  reduce 64
+
+
+state 159
+	func_start : function_name LSQ . parameter_list RSQ  (7)
+	parameter_list : .  (11)
+	ident_type : .  (109)
+
+	DRONE  shift 4
+	TIMER  shift 5
+	TYPE_STRING  shift 6
+	TYPE_FLOAT  shift 7
+	TYPE_INT  shift 8
+	TYPE_BOOL  shift 9
+	VOID_FUNC  shift 10
+	CONST  reduce 109
+	VARIABLE  reduce 109
+	RSQ  reduce 11
+
+	ident_type  goto 19
+	parameter_list  goto 163
+
+
+state 160
+	matched : IF log_stmts END_STATEMENT matched ELSE END_STATEMENT matched .  (22)
+
+	.  reduce 22
+
+
+state 161
+	unmatched : IF log_stmts END_STATEMENT matched ELSE END_STATEMENT unmatched .  (25)
+
+	.  reduce 25
+
+
+state 162
+	connect : ident_type CONNECT_FUNC LSQ variable COMMA variable RSQ . END_STATEMENT  (53)
+
+	END_STATEMENT  shift 164
+	.  error
+
+
+state 163
+	func_start : function_name LSQ parameter_list . RSQ  (7)
+
+	RSQ  shift 165
+	.  error
+
+
+state 164
+	connect : ident_type CONNECT_FUNC LSQ variable COMMA variable RSQ END_STATEMENT .  (53)
+
+	.  reduce 53
+
+
+state 165
+	func_start : function_name LSQ parameter_list RSQ .  (7)
+
+	.  reduce 7
+
+
+Rules never reduced:
+	while_loop : WHILE log_stmts END_STATEMENT stmts  (42)
+	while_loop : WHILE comparison END_STATEMENT stmts  (43)
+	for : FOR_LOOP ident_type var COMMA comparison COMMA assignment END_STATEMENT stmts  (44)
+	assignment : ident_type var ASGN_OP log_stmts  (62)
+	assignment : var ASGN_OP log_stmts  (67)
+	comparison : var BIGGER_THAN var  (70)
+	comparison : dronic BIGGER_THAN dronic  (71)
+	comparison : var LESS_THAN var  (72)
+	comparison : dronic LESS_THAN dronic  (73)
+	comparison : var BIGGER_EQUAL var  (74)
+	comparison : dronic BIGGER_EQUAL dronic  (75)
+	comparison : var LESS_EQUAL var  (76)
+	comparison : dronic LESS_EQUAL dronic  (77)
+	comparison : var EQUAL var  (78)
+	comparison : dronic EQUAL dronic  (79)
+	comparison : var NOT_EQUAL var  (80)
+	comparison : dronic NOT_EQUAL dronic  (81)
+	term : term  (87)
+	term : factor  (89)
+	print : print LSQ dronic RSQ  (93)
+	print : print LSQ log_stmts RSQ  (94)
+	print : print LSQ primitive_func RSQ  (95)
+	print : print LSQ variable RSQ  (96)
+	input :  (97)
+
+
+State 27 contains 1 shift/reduce conflict.
+State 40 contains 1 shift/reduce conflict.
+State 44 contains 2 shift/reduce conflicts.
+State 64 contains 2 shift/reduce conflicts.
+State 65 contains 1 shift/reduce conflict.
+State 73 contains 1 shift/reduce conflict.
+State 82 contains 1 shift/reduce conflict.
+State 83 contains 3 shift/reduce conflicts.
+State 85 contains 2 shift/reduce conflicts, 28 reduce/reduce conflicts.
+State 87 contains 1 shift/reduce conflict.
+State 100 contains 7 shift/reduce conflicts.
+State 103 contains 2 shift/reduce conflicts.
+State 104 contains 2 shift/reduce conflicts.
+State 105 contains 1 shift/reduce conflict, 26 reduce/reduce conflicts.
+State 108 contains 1 shift/reduce conflict, 28 reduce/reduce conflicts.
+State 109 contains 29 reduce/reduce conflicts.
+State 110 contains 1 shift/reduce conflict.
+State 111 contains 2 shift/reduce conflicts, 28 reduce/reduce conflicts.
+State 114 contains 29 reduce/reduce conflicts.
+State 129 contains 1 shift/reduce conflict, 26 reduce/reduce conflicts.
+State 136 contains 2 shift/reduce conflicts.
+State 137 contains 2 shift/reduce conflicts.
+State 138 contains 2 shift/reduce conflicts.
+State 150 contains 1 shift/reduce conflict, 28 reduce/reduce conflicts.
+State 151 contains 1 shift/reduce conflict, 28 reduce/reduce conflicts.
+State 153 contains 1 shift/reduce conflict.
+
+
+68 terminals, 43 nonterminals
+110 grammar rules, 166 states
